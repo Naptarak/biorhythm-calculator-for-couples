@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Biorhythm Calculator</title>
+  </head>
+  <body>
+    <h1>Biorhythm Calculator</h1>
+    <p>
+      Enter your birthdate and your partner's birthdate to calculate your physical, emotional, and intellectual biorhythms.
+    </p>
+    <form>
+      <label for="date1">Your birthdate:</label>
+      <input type="date" id="date1" name="date1"><br>
+      <label for="date2">Partner's birthdate:</label>
+      <input type="date" id="date2" name="date2"><br><br>
+      <button type="button" onclick="calculateBiorhythms()">Calculate</button>
+    </form>
+    <br>
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Physical Biorhythm</th>
+          <th>Emotional Biorhythm</th>
+          <th>Intellectual Biorhythm</th>
+        </tr>
+      </thead>
+      <tbody id="resultTable"></tbody>
+    </table>
+    <script>
+      function calculateBiorhythms() {
+        // Get birthdates
+        const date1 = new Date(document.getElementById("date1").value);
+        const date2 = new Date(document.getElementById("date2").value);
+
+        // Calculate days since birthdates
+        const msPerDay = 1000 * 60 * 60 * 24;
+        const days1 = Math.round((Date.now() - date1.getTime()) / msPerDay);
+        const days2 = Math.round((Date.now() - date2.getTime()) / msPerDay);
+
+        // Calculate biorhythms for the next 30 days
+        const biorhythms = [];
+        const today = new Date();
+        for (let i = 0; i < 30; i++) {
+          const date = new Date(today.getTime() + i * msPerDay);
+          const daysSince1 = Math.round((date.getTime() - date1.getTime()) / msPerDay);
+          const physical1 = Math.sin(2 * Math.PI * daysSince1 / 23) * 100;
+          const emotional1 = Math.sin(2 * Math.PI * daysSince1 / 28) * 100;
+          const intellectual1 = Math.sin(2 * Math.PI * daysSince1 / 33) * 100;
+          const daysSince2 = Math.round((date.getTime() - date2.getTime()) / msPerDay);
+          const physical2 = Math.sin(2 * Math.PI * daysSince2 / 23) * 100;
+          const emotional2 = Math.sin(2 * Math.PI * daysSince2 / 28) * 100;
+          const intellectual2 = Math.sin(2 * Math.PI * daysSince2 / 33) * 100;
+          const physical = (physical1 + physical2)/2;
+          const emotional = (emotional1 + emotional2)/2;
+          const intellectual = (intellectual1 + intellectual2)/2;
+          biorhythms.push({ date, physical, emotional, intellectual });
+        }
+
+        // Display biorhythms in table
+        const resultTable = document.getElementById("resultTable");
+        resultTable.innerHTML = "";
+        for (const biorhythm of biorhythms) {
+          const row = resultTable.insertRow();
+          const dateCell = row.insertCell();
+          const physicalCell = row.insertCell();
+          const emotionalCell = row.insertCell();
+          const intellectualCell = row.insertCell();
+          dateCell.innerText = biorhythm.date.toDateString();
+          physicalCell.innerText = biorhythm.physical.toFixed(2) + "%";
+          emotionalCell.innerText = biorhythm.emotional.toFixed(2) + "%";
+          intellectualCell.innerText = biorhythm.intellectual.toFixed(2) + "%";
+
+
+if (biorhythm.physical < -75) {
+  physicalCell.style.backgroundColor = "red";
+} else if (biorhythm.physical > 75) {
+  physicalCell.style.backgroundColor = "green";
+}
+
+if (biorhythm.emotional < -75) {
+  emotionalCell.style.backgroundColor = "red";
+} else if (biorhythm.emotional > 75) {
+  emotionalCell.style.backgroundColor = "green";
+}
+
+if (biorhythm.intellectual < -75) {
+  intellectualCell.style.backgroundColor = "red";
+} else if (biorhythm.intellectual > 75) {
+  intellectualCell.style.backgroundColor = "green";
+}
+          
+        }
+      }
+    </script>
+  </body>
+</html>
+
